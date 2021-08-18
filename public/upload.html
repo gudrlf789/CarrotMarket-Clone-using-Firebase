@@ -89,7 +89,28 @@
   <script>
 
     const db = firebase.firestore();
-    db.collection('product').add();
+    const storage = firebase.storage();
+
+    $('#send').click(function(){
+
+        let file = document.querySelector('#image').files[0];
+        let storageRef = storage.ref();
+        let savePath = storage.child('image/' + file.name);
+        let uploadWorking = savePath.put(file);
+
+        let saveItem = { 
+            제목 : $('#title').val(),
+            가격 : Number($('#price').val()),
+            내용 : $('#content').val(),
+            날짜 : new Date()
+        };
+        db.collection('product').add(saveItem).then((e) => {
+            console.log(e);
+            window.location.href = "/index.html";
+        }).catch((error) => {
+            console.log(error);
+        });
+    })
 
   </script>
 
