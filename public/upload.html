@@ -98,17 +98,25 @@
         let savePath = storage.child('image/' + file.name);
         let uploadWorking = savePath.put(file);
 
-        let saveItem = { 
-            제목 : $('#title').val(),
-            가격 : Number($('#price').val()),
-            내용 : $('#content').val(),
-            날짜 : new Date()
-        };
-        db.collection('product').add(saveItem).then((e) => {
-            console.log(e);
-            window.location.href = "/index.html";
-        }).catch((error) => {
-            console.log(error);
+        uploadWorking.on('state_changed', null, (error) => {
+            console.error('실패사유: ' + error);
+        }, () => {
+            uploadWorking.snapshot.ref.getDownloadURL().then((url) => {
+                let saveItem = { 
+                    제목 : $('#title').val(),
+                    가격 : Number($('#price').val()),
+                    내용 : $('#content').val(),
+                    날짜 : new Date(),
+                    이미지 : url
+                };
+                
+                db.collection('product').add(saveItem).then((e) => {
+                    console.log(e);
+                    window.location.href = "/index.html";
+                }).catch((error) => {
+                    console.log(error);
+                });
+            });
         });
     })
 
